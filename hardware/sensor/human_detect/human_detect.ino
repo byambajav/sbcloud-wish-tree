@@ -7,6 +7,7 @@ int prevState = 0;
 const int switchPin = 8;
 const int delayTimer = 5000;
 const String humanMsg = "HUMAN";
+long humanDetectTime = 0;
 
 
 
@@ -20,41 +21,34 @@ void setup()
   blinkLed();
 }
 
+
+
 void loop()
 {
-//  if(digitalRead(9) == HIGH){
-//    if(prevState == 0){
-//      Serial.println("PRESS");
-//      prevState = 1;
-//    }
-//  } else {
-//    if(prevState == 1){
-//      Serial.println(" ");
-//      prevState = 0;
-//    }
-//  }
-
-//  if(digitalRead(switchPin) == HIGH){
-
     // reading human sensor
+//    blinkLed();
+//    Serial.println(millis());
     ad = analogRead(analogInPin);
     if ( ad == 0 ) {
       digitalWrite(ledPin, LOW);
       if(prevState == 1){
+        long holdTime = millis() - humanDetectTime;
+        delay(500);
+        Serial.println("On Hold Time: " + holdTime);
         Serial.println(" ");
         prevState = 0;
       }
     }else{
       digitalWrite(ledPin, HIGH);
       if(prevState == 0){
+        blinkLed();
+        blinkLed();
+        humanDetectTime = millis();
         Serial.println(humanMsg);
-        blinkLed();
-        blinkLed();
+        
         prevState = 1;
       }
     }
-//  }
-  
 
 }
 
