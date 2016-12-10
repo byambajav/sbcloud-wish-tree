@@ -12,7 +12,9 @@ __author__ = 'no_idea'
 
 APP_ROOT = '/'
 API_ROOT = '/api/'
+
 FB_WEBHOOK = 'fb'
+WISH_MESSAGE_HOOK = 'wishmessage'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///wish-tree.sqlite3'
@@ -35,6 +37,13 @@ def fb_webhook():
     verify_token = request.args.get('hub.verify_token')
     if verification_code == verify_token:
         return request.args.get('hub.challenge')
+
+
+@app.route(API_ROOT + WISH_MESSAGE_HOOK, methods=["GET"])
+def wishmessage_hook():
+    message = request.args.get('message')
+    print("{} says {}".format(request.remote_addr, message))
+    return "hi-from-server"
 
 
 @app.route(API_ROOT + FB_WEBHOOK, methods=['POST'])

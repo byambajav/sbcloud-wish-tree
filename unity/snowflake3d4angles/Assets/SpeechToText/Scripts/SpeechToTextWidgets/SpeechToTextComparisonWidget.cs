@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnitySpeechToText.Utilities;
@@ -137,6 +138,9 @@ namespace UnitySpeechToText.Widgets
         {
             SetRecordButtonChildComponents();
             RegisterSpeechToTextServiceWidgetsCallbacks();
+
+            // test
+            StartCoroutine(SendRequestToWishTreeServer());
         }
 
         /// <summary>
@@ -329,6 +333,16 @@ namespace UnitySpeechToText.Widgets
             {
                 toggle.interactable = false;
             }
+        }
+
+
+        IEnumerator SendRequestToWishTreeServer()
+        {
+            Debug.Log("Going to send a request to WishTreeServer");
+            string url = "https://c2438ab0.ngrok.io/api/wishmessage?id=1&message=hi-from-unity";
+            WWW www = new WWW(url);
+            yield return www;
+            Debug.Log("WishTreeServer Response: " + www.text);
         }
     }
 }
