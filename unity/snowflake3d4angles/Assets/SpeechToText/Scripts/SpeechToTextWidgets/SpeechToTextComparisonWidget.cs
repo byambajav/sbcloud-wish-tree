@@ -239,8 +239,10 @@ namespace UnitySpeechToText.Widgets
         /// </summary>
         void StartRecording()
         {
+            Debug.Log("StartRecording - CompWidget");
             if (!m_IsRecording)
             {
+                Debug.Log("!m_IsRecording");
                 SmartLogger.Log(DebugFlags.SpeechToTextWidgets, "Start comparison recording");
                 m_IsCurrentlyInSpeechToTextSession = true;
                 m_IsRecording = true;
@@ -249,6 +251,7 @@ namespace UnitySpeechToText.Widgets
                 m_WaitingSpeechToTextServiceWidgets.Clear();
                 foreach (var serviceWidget in m_SpeechToTextServiceWidgets)
                 {
+                    Debug.Log("serviceWidget.StartRecording()");
                     SmartLogger.Log(DebugFlags.SpeechToTextWidgets, "tell service widget to start recording");
                     serviceWidget.StartRecording();
                     m_WaitingSpeechToTextServiceWidgets.Add(serviceWidget);

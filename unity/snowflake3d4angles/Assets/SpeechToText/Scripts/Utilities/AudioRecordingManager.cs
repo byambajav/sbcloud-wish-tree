@@ -105,6 +105,7 @@ namespace UnitySpeechToText.Utilities
         public IEnumerator RecordAndWaitUntilDone()
         {
             StartRecording();
+            Debug.Log("RecordAndWaitUntilDone");
             while (IsRecording())
             {
                 yield return null;
@@ -130,12 +131,15 @@ namespace UnitySpeechToText.Utilities
         /// </summary>
         public void StopRecording()
         {
+            Debug.Log("StopRecording");
             if (Microphone.IsRecording(null))
             {
+                Debug.Log("StopRecording True");
                 m_ForcedStopRecording = true;
                 Microphone.End(null);
                 float recordingLengthInSeconds = Time.time - m_RecordingStartTime;
                 SmartLogger.Log(DebugFlags.AudioRecordingManager, "Unity mic recording length: " + recordingLengthInSeconds + " seconds");
+                Debug.Log("Unity mic recording length: " + recordingLengthInSeconds + " seconds");
 
                 // Trim the default audio clip produced by UnityEngine.Microphone to fit the actual recording length.
                 var samples = new float[Mathf.CeilToInt(m_RecordedAudio.frequency * recordingLengthInSeconds)];
