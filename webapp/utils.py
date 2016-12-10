@@ -5,6 +5,7 @@ import config
 
 import requests
 
+from gtts import gTTS
 from models import User, db
 
 
@@ -58,3 +59,14 @@ def find_in_list(l, e):
         return index_element
     except ValueError:
         return -1
+
+
+def update_message_mp3_path(device):
+    if device.message_mp3_path != '':
+        return
+    tts = gTTS(text=device.message, lang='en')
+    path = 'message_mp3s/{}.mp3'.format(device.id)
+    tts.save(path)
+    device.message_mp3_path = path
+    db.session.add(device)
+    db.session.commit()

@@ -36,11 +36,13 @@ class Device(db.Model):
     user_id = db.Column(db.ForeignKey(u'user.id'), nullable=False,
                         index=True)
     message = db.Column(db.String(1024))
+    message_mp3_path = db.Column(db.String(1024))
 
-    def __init__(self, serial, user_id, message=''):
+    def __init__(self, serial, user_id, message, message_mp3_path=''):
         self.serial = serial
         self.user_id = user_id
         self.message = message
+        self.message_mp3_path = message_mp3_path
 
     def __repr__(self):
         return 'User: serial={}, user_id={}'.format(self.serial, self.user_id)
