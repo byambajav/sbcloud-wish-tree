@@ -152,8 +152,10 @@ namespace UnitySpeechToText.Widgets
         /// </summary>
         void SetRecordButtonChildComponents()
         {
+            Debug.Log("SetRecordButtonChildComponents");
             if (m_RecordButton != null)
             {
+                Debug.Log("m_RecordButton != null");
                 m_RecordButtonTextUI = m_RecordButton.GetComponentInChildren<Text>();
                 m_RecordButtonImage = m_RecordButton.GetComponent<Image>();
             }
