@@ -28,3 +28,17 @@ class User(db.Model):
     def __repr__(self):
         return 'User: sender_id={}, first_name={}, last_name={})'.format(
             self.sender_id, self.first_name, self.last_name)
+
+
+class Device(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    serial = db.Column(db.String(1024))
+    user_id = db.Column(db.ForeignKey(u'user.id'), nullable=False,
+                        index=True)
+
+    def __init__(self, serial, user_id):
+        self.serial = serial
+        self.user_id = user_id
+
+    def __repr__(self):
+        return 'User: serial={}, user_id={}'.format(self.serial, self.user_id)

@@ -5,7 +5,7 @@ import json
 from flask import Flask, request
 
 from message import SendMessage
-from models import db
+from models import db, Device
 from utils import get_user
 
 __author__ = 'no_idea'
@@ -46,6 +46,23 @@ def wishmessage_hook():
     return "hi-from-server"
 
 
+def register_device(user, d_serial):
+    d = Device.query.filter_by(user_id=user.id).first()
+    sm = SendMessage(user.sender_id)
+    if d is None:
+        d = Device(d_serial, user.id)
+        db.session.add(user)
+        db.session.commit()
+        sm.build_text_message('Registered {}.'.format(d.serial)).send_message()
+    else:
+        sm.build_text_message('{} was already registered.'.format(
+            d.serial)).send_message()
+
+
+def unregister_device(user, did):
+    pass
+
+
 @app.route(API_ROOT + FB_WEBHOOK, methods=['POST'])
 def fb_receive_message():
     message_entries = json.loads(request.data.decode('utf8'))['entry']
@@ -64,6 +81,10 @@ def fb_receive_message():
                     if text.lower().rstrip().lstrip() in GREETINGS and len(
                             user.first_name) > 0:
                         resp = 'Hey, ' + user.first_name
+
+                    if text.lower().lstrip().startswith('register '):
+                        register_device(user, text.split()[1])
+                        return "register"
 
                     # echo
                     sm.build_text_message(resp).send_message()
