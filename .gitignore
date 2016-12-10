@@ -36,3 +36,5 @@ sysinfo.txt
 
 # Config
 config.py
+# Mac
+.DS_Store
