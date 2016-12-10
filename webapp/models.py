@@ -35,10 +35,12 @@ class Device(db.Model):
     serial = db.Column(db.String(1024))
     user_id = db.Column(db.ForeignKey(u'user.id'), nullable=False,
                         index=True)
+    message = db.Column(db.String(1024))
 
-    def __init__(self, serial, user_id):
+    def __init__(self, serial, user_id, message=''):
         self.serial = serial
         self.user_id = user_id
+        self.message = message
 
     def __repr__(self):
         return 'User: serial={}, user_id={}'.format(self.serial, self.user_id)

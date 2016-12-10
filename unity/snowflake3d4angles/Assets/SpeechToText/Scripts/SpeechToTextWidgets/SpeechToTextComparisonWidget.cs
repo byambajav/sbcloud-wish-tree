@@ -339,7 +339,7 @@ namespace UnitySpeechToText.Widgets
         IEnumerator SendRequestToWishTreeServer()
         {
             Debug.Log("Going to send a request to WishTreeServer");
-            string url = "https://c2438ab0.ngrok.io/api/wishmessage?id=1&message=hi-from-unity";
+            string url = "https://c2438ab0.ngrok.io/api/wishmessage?serial=wish-tree-01&message=hi-from-unity";
             WWW www = new WWW(url);
             yield return www;
             Debug.Log("WishTreeServer Response: " + www.text);

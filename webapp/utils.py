@@ -50,3 +50,11 @@ def get_user(sender_id):
         print("Registered user:", str(user))
 
     return user
+
+
+def find_in_list(l, e):
+    try:
+        index_element = l.index(e)
+        return index_element
+    except ValueError:
+        return -1

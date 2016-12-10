@@ -6,7 +6,7 @@ from flask import Flask, request
 
 from message import SendMessage
 from models import db, Device
-from utils import get_user
+from utils import get_user, find_in_list
 
 __author__ = 'no_idea'
 
@@ -42,24 +42,31 @@ def fb_webhook():
 @app.route(API_ROOT + WISH_MESSAGE_HOOK, methods=["GET"])
 def wishmessage_hook():
     message = request.args.get('message')
-    print("{} says {}".format(request.remote_addr, message))
-    return "hi-from-server"
+    serial = request.args.get('serial')
+    print("{} says message:{} serial:{}".format(request.remote_addr, message,
+                                                serial))
+    d = Device.query.filter_by(serial=serial).first()
+    if d is None:
+        return "invalid serial"
+    else:
+        return d.message
 
 
-def register_device(user, d_serial):
-    d = Device.query.filter_by(user_id=user.id).first()
+def register_device(user, serial, message):
+    d = Device.query.filter_by(serial=serial).first()
     sm = SendMessage(user.sender_id)
     if d is None:
-        d = Device(d_serial, user.id)
-        db.session.add(user)
+        d = Device(serial, user.id, message)
+        db.session.add(d)
         db.session.commit()
-        sm.build_text_message('Registered {}.'.format(d.serial)).send_message()
+        sm.build_text_message('Registered {} with message "{}".'.format(
+            d.serial, message)).send_message()
     else:
         sm.build_text_message('{} was already registered.'.format(
             d.serial)).send_message()
 
 
-def unregister_device(user, did):
+def unregister_device(user, serial):
     pass
 
 
@@ -82,9 +89,24 @@ def fb_receive_message():
                             user.first_name) > 0:
                         resp = 'Hey, ' + user.first_name
 
-                    if text.lower().lstrip().startswith('register '):
-                        register_device(user, text.split()[1])
+                    # if text.lower().lstrip().startswith('register '):
+                    words = text.lower().split()
+                    r_idx = find_in_list(words, 'register')
+                    m_idx = find_in_list(words, 'message')
+                    if r_idx >= 0 and r_idx < m_idx and m_idx < len(
+                            words) - 1:
+                        words_ = text.split()
+                        register_device(
+                            user,
+                            words_[r_idx + 1],
+                            ' '.join(words_[m_idx + 1:])
+                        )
                         return "register"
+
+                    r_idx = find_in_list(words, 'unregister')
+                    if r_idx >= 0 and r_idx < len(words) - 1:
+                        unregister_device(user, words[r_idx + 1])
+                        return "unregister"
 
                     # echo
                     sm.build_text_message(resp).send_message()
