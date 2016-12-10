@@ -2,6 +2,7 @@
 
 
 import config
+import os.path
 
 import requests
 
@@ -62,7 +63,8 @@ def find_in_list(l, e):
 
 
 def update_message_mp3_path(device):
-    if device.message_mp3_path != '':
+    if device.message_mp3_path != '' and os.path.exists(
+            device.message_mp3_path):
         return
     tts = gTTS(text=device.message, lang='en')
     path = 'message_mp3s/{}.mp3'.format(device.id)
