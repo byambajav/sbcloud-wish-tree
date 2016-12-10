@@ -19,4 +19,5 @@ The server will user python3 inside a virtualenv.
 $ virtualenv -p python3 env
 $ source env/bin/activate
 (env)$ pip install -r requirements.txt
+(env)$ python manage.py init_db
 ```

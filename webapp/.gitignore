@@ -91,4 +91,5 @@ ENV/
 # Rope project settings
 .ropeproject
 
-
+# DB
+wish-tree.sqlite3

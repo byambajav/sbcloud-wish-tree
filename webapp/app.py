@@ -4,6 +4,10 @@ import json
 
 from flask import Flask, request
 
+from message import SendMessage
+from models import db
+from utils import get_user
+
 __author__ = 'no_idea'
 
 APP_ROOT = '/'
@@ -11,6 +15,13 @@ API_ROOT = '/api/'
 FB_WEBHOOK = 'fb'
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///wish-tree.sqlite3'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+
+
+GREETINGS = ['hi', 'hii', 'hiii', 'hey', 'heey', 'yo', 'yoo', 'hello', 'howdy',
+             'good']
 
 
 @app.route(APP_ROOT, methods=["GET"])
@@ -32,10 +43,21 @@ def fb_receive_message():
     for entry in message_entries:
         messagings = entry['messaging']
         for message in messagings:
-            sender = message['sender']['id']
+            sender_id = message['sender']['id']
+            user = get_user(sender_id)
+            sm = SendMessage(sender_id)
             if message.get('message'):
-                text = message['message']['text']
-                print("{} says {}".format(sender, text))
+                msg = message['message']
+                if 'text' in msg:
+                    text = msg['text']
+                    print("{} says {}".format(user.sender_id, text))
+                    resp = ':)'
+                    if text.lower().rstrip().lstrip() in GREETINGS and len(
+                            user.first_name) > 0:
+                        resp = 'Hey, ' + user.first_name
+
+                    # echo
+                    sm.build_text_message(resp).send_message()
     return "Hi"
 
 
