@@ -5,20 +5,19 @@ using Random = UnityEngine.Random;
 
 public class FireworkManager : MonoBehaviour {
 
-    Vector3 spawnLocation;
+    bool isActive;
 
 	// Use this for initialization
 	void Start () {
-        spawnLocation = new Vector3(0, 2, -500);
-        InvokeRepeating("ChangePosition", 0, 2); //calls ChangePosition() every 2 secs
+        isActive = true;
+        gameObject.SetActive(false);
+        //InvokeRepeating("ChangePosition", 0, 2); //calls ChangePosition() every 2 secs
     }
 	
     void ChangePosition()
     {
-        gameObject.SetActive(false);
-        transform.position = spawnLocation;
-        spawnLocation = new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), -500);
-        gameObject.SetActive(true);
+        gameObject.SetActive(isActive);
+        isActive = !isActive;
     }
 
 	// Update is called once per frame
