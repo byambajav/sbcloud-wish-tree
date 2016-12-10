@@ -6,7 +6,7 @@ from flask import Flask, request
 
 from message import SendMessage
 from models import db, Device
-from utils import get_user, find_in_list
+from utils import get_user, find_in_list, update_message_mp3_path
 
 __author__ = 'no_idea'
 
@@ -49,7 +49,7 @@ def wishmessage_hook():
     if d is None:
         return "invalid serial"
     else:
-        return d.message
+        return d.message_mp3_path
 
 
 def register_device(user, serial, message):
@@ -61,6 +61,7 @@ def register_device(user, serial, message):
         db.session.commit()
         sm.build_text_message('Registered {} with message "{}".'.format(
             d.serial, message)).send_message()
+        update_message_mp3_path(d)
     else:
         sm.build_text_message('{} was already registered.'.format(
             d.serial)).send_message()
