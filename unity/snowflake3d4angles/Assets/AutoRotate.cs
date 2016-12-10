@@ -18,8 +18,8 @@ public class AutoRotate : MonoBehaviour {
     void Update()
     {
         //transform.Rotate(transform.position.x, rotationSpeed, transform.position.z);
-        transform.Rotate(Vector3.right * Time.deltaTime * rotationSpeed);
-        transform.Rotate(0, Time.deltaTime * rotationSpeed, 0, Space.World);
+		transform.Rotate(Vector3.down * Time.deltaTime * rotationSpeed);
+        //transform.Rotate(0, Time.deltaTime * rotationSpeed, 0, Space.World);
         if (c.a != 0f)
         {
             c.a = c.a - 0.002f;
