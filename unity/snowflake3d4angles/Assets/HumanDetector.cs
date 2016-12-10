@@ -52,10 +52,11 @@ public class HumanDetector : MonoBehaviour
 //		}
 		Debug.Log(message);
 		message = message.Trim ();
-		if (message.Equals ("PRESS")) {
-			Debug.Log ("calling");
+		if (message.Contains ("HUMAN")) {
+			
 //			SceneManager.UnloadSceneAsync ("SensorReader");
 			SceneManager.LoadScene ("SelfMade");
+			Debug.Log ("snowing");
 //			Application.LoadLevel("SelfMade");
 		}
 
