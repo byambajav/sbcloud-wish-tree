@@ -11,13 +11,21 @@ $ pip2 install aliyuncli
 $ pip2 install aliyun-python-sdk-ecs
 ```
 
-### The Server
+### Webapp
 
 The server will user python3 inside a virtualenv.
 
 ```sh
-$ virtualenv -p python3 env
+$ # create config.py and set config parameters
+$ virtualenv -p python3.5 env
 $ source env/bin/activate
 (env)$ pip install -r requirements.txt
 (env)$ python manage.py init_db
+```
+
+## Running
+
+```sh
+$ source env/bin/activate
+(env)$ python app.py
 ```
