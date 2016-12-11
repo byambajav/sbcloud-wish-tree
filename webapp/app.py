@@ -25,7 +25,7 @@ db.init_app(app)
 GREETINGS = ['hi', 'hii', 'hiii', 'hey', 'heey', 'yo', 'yoo', 'hello', 'howdy',
              'good']
 GET_STARTED_REPLY = (
-    'Welcome to WishTree!\n'
+    'Hi {}. Welcome to WishTree!\n'
     'When your kid makes a wish, our Santa Clause will reply with a message. '
     'You can replace that message content by typing your message here. '
     'Type it and hit send!'
@@ -66,18 +66,20 @@ def wishmessage_hook():
 
 
 def register_device(user, serial, message):
-    d = Device.query.filter_by(serial=serial).first()
+    d = Device.query.filter_by(serial=serial, user_id=user.id).first()
     sm = SendMessage(user.sender_id)
     if d is None:
         d = Device(serial, user.id, message)
         db.session.add(d)
-        db.session.commit()
         sm.build_text_message('Registered {} with message "{}".'.format(
             d.serial, message)).send_message()
         update_message_mp3_path(d)
     else:
-        sm.build_text_message('{} was already registered.'.format(
-            d.serial)).send_message()
+        d.message = message
+        sm.build_text_message('Updated {} with message "{}".'.format(
+            d.serial, message)).send_message()
+    user.status = UserStatus.SET_MESSAGE.value
+    db.session.commit()
 
 
 def unregister_device(user, serial):
@@ -88,7 +90,8 @@ def handle_postback(user, sm, payload):
     if payload == Payload.GET_STARTED:
         user.status = UserStatus.SETTING_MESSAGE.value
         db.session.commit()
-        sm.build_text_message(GET_STARTED_REPLY).send_message()
+        sm.build_text_message(GET_STARTED_REPLY.format(
+            user.first_name)).send_message()
 
 
 @app.route(API_ROOT + FB_WEBHOOK, methods=['POST'])
@@ -128,6 +131,14 @@ def fb_receive_message():
                     if r_idx >= 0 and r_idx < len(words) - 1:
                         unregister_device(user, words[r_idx + 1])
                         return "unregister"
+
+                    if user.status == UserStatus.SETTING_MESSAGE.value:
+                        register_device(
+                            user,
+                            'wish-tree-01',
+                            text
+                        )
+                        return "register status"
 
                     # echo
                     sm.build_text_message(resp).send_message()
