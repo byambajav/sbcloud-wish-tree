@@ -5,7 +5,7 @@ import json
 from flask import Flask, request
 
 from message import SendMessage
-from models import db, Device
+from models import db, Device, UserStatus
 from utils import get_user, find_in_list, update_message_mp3_path
 
 __author__ = 'no_idea'
@@ -24,6 +24,18 @@ db.init_app(app)
 
 GREETINGS = ['hi', 'hii', 'hiii', 'hey', 'heey', 'yo', 'yoo', 'hello', 'howdy',
              'good']
+GET_STARTED_REPLY = (
+    'Welcome to WishTree!\n'
+    'When your kid makes a wish, our Santa Clause will reply with a message. '
+    'You can replace that message content by typing your message here. '
+    'Type it and hit send!'
+)
+
+
+class Payload():
+    HELP = 'HELP'
+    GET_STARTED = 'GET_STARTED'
+    REGISTERED_MESSAGES = 'REGISTERED_MESSAGES'
 
 
 @app.route(APP_ROOT, methods=["GET"])
@@ -72,6 +84,13 @@ def unregister_device(user, serial):
     pass
 
 
+def handle_postback(user, sm, payload):
+    if payload == Payload.GET_STARTED:
+        user.status = UserStatus.SETTING_MESSAGE.value
+        db.session.commit()
+        sm.build_text_message(GET_STARTED_REPLY).send_message()
+
+
 @app.route(API_ROOT + FB_WEBHOOK, methods=['POST'])
 def fb_receive_message():
     message_entries = json.loads(request.data.decode('utf8'))['entry']
@@ -112,6 +131,10 @@ def fb_receive_message():
 
                     # echo
                     sm.build_text_message(resp).send_message()
+            elif message.get('postback'):
+                payload = message['postback']['payload']
+                handle_postback(user, sm, payload)
+
     return "Hi"
 
 

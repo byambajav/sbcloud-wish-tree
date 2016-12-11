@@ -9,6 +9,8 @@ db = SQLAlchemy()
 
 class UserStatus(Enum):
     START = 'start'
+    SETTING_MESSAGE = 'setting_message'
+    SET_MESSAGE = 'set_message'
 
 
 class User(db.Model):

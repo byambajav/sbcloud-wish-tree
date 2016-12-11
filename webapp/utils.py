@@ -80,5 +80,4 @@ def update_message_mp3_path(device):
     clip.export(ogg_path, format='ogg')
 
     device.message_mp3_path = ogg_path
-    db.session.add(device)
     db.session.commit()
