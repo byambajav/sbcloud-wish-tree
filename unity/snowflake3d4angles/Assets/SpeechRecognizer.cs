@@ -38,6 +38,7 @@ public class SpeechRecognizer: MonoBehaviour {
     /// </summary>
     Action<SpeechRecognizer> m_OnReceivedLastResponse;
 
+    public string WISHTREE_SERVER_URL = "https://c2438ab0.ngrok.io/";
 
     /// <summary>
     /// The specific speech-to-text service to use
@@ -57,15 +58,25 @@ public class SpeechRecognizer: MonoBehaviour {
 
         RegisterSpeechToTextServiceCallbacks();
         // Start function WaitAndStartRecording as a coroutine.
-        StartCoroutine(WaitAndStartRecording(10));
+        StartCoroutine(WaitAndStartRecording(3, 10));
 
         print ("Before WaitAndStartRecording Finishes " + Time.time);
     }
 
-    private IEnumerator WaitAndStartRecording(float waitTime) {
-        yield return new WaitForSeconds(waitTime);
+    private IEnumerator WaitAndStartRecording(float startWaitTime, float stopWaitTime) {
+        yield return new WaitForSeconds(startWaitTime);
         print("WaitAndStartRecording " + Time.time);
         StartRecording();
+
+        // reserve stop
+        StartCoroutine(WaitAndStopRecording(stopWaitTime));
+    }
+
+
+    private IEnumerator WaitAndStopRecording(float waitTime) {
+        yield return new WaitForSeconds(waitTime);
+        print("WaitAndStopRecording " + Time.time);
+        StopRecording();
     }
 
 
@@ -101,6 +112,14 @@ public class SpeechRecognizer: MonoBehaviour {
         {
             Debug.Log("!m_IsRecording");
             Debug.Log("Stop recording");
+            if (m_LastResultWasFinal)
+            {
+                ProcessEndResults();
+            }
+            else
+            {
+                m_WaitingForLastFinalResultOfSession = true;
+            }
             m_SpeechToTextService.StopRecording();
         } else {
             Debug.Log("Already !m_IsRecording");
@@ -143,6 +162,8 @@ public class SpeechRecognizer: MonoBehaviour {
     /// <param name="result">The speech-to-text result</param>
     void OnTextResult(SpeechToTextResult result)
     {
+        Debug.Log("OnTextResult: " + result.TextAlternatives[0].Text);
+
         // this just uses the first alternative
         m_LastResultWasFinal = result.IsFinal;
         if (result.IsFinal)
@@ -170,7 +191,21 @@ public class SpeechRecognizer: MonoBehaviour {
         {
             m_OnReceivedLastResponse(this);
         }
+
+        // send the results to the WishTree Server
+        StartCoroutine(SendRequestToWishTreeServer(m_ResultsText));
     }
+
+    IEnumerator SendRequestToWishTreeServer(string message)
+    {
+        Debug.Log("Going to send a request to WishTreeServer");
+        string url = WISHTREE_SERVER_URL + "api/wishmessage?serial=wish-tree-01&message=" + WWW.EscapeURL(message);
+        Debug.Log("url: " + url);
+        WWW www = new WWW(url);
+        yield return www;
+        Debug.Log("WishTreeServer Response: " + www.text);
+    }
+
 
     /// <summary>
     /// Function that is called when an error occurs. If this object is waiting for
