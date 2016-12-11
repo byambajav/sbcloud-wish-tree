@@ -42,6 +42,9 @@ public class SpeechRecognizer: MonoBehaviour {
     public string WISHTREE_SERVER_URL = "https://69422f4c.ngrok.io/";
     public string SANTA_OGG_PATH = "file:///Users/byambajav/git-repos/wish-tree/unity/snowflake3d4angles/Assets/santa.ogg";
 
+    public Transform firework1;
+    public Transform firework2;
+
     /// <summary>
     /// The specific speech-to-text service to use
     /// </summary>
@@ -63,6 +66,9 @@ public class SpeechRecognizer: MonoBehaviour {
         StartCoroutine(WaitAndStartRecording(3, 10));
 
         print ("Before WaitAndStartRecording Finishes " + Time.time);
+
+        firework1.gameObject.SetActive(false);
+        firework2.gameObject.SetActive(false);
     }
 
     private IEnumerator WaitAndStartRecording(float startWaitTime, float stopWaitTime) {
@@ -213,6 +219,7 @@ public class SpeechRecognizer: MonoBehaviour {
         yield return www;
         Debug.Log("WishTreeServer Response: " + www.text);
         StartCoroutine(DownloadAndPlay(WISHTREE_SERVER_URL + www.text));
+        StartCoroutine(Play());
     }
 
     IEnumerator DownloadAndPlay(string url)
@@ -284,5 +291,14 @@ public class SpeechRecognizer: MonoBehaviour {
         m_OnReceivedLastResponse -= action;
     }
 
-
+    IEnumerator Play()
+    {
+        firework1.gameObject.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        firework2.gameObject.SetActive(true);
+        yield return new WaitForSeconds(1.5f);
+        firework1.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+        firework2.gameObject.SetActive(false);
+    }
 }
