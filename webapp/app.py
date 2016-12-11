@@ -76,7 +76,7 @@ def wishmessage_hook():
         return DEFAULT_OGG_PATH
 
 
-def register_device(user, serial, message, confirm=True):
+def register_device(user, serial, message, default=False, confirm=True):
     d = Device.query.filter_by(serial=serial, user_id=user.id).first()
     sm = SendMessage(user.sender_id)
     if d is None:
@@ -91,7 +91,10 @@ def register_device(user, serial, message, confirm=True):
             sm.build_text_message('Updated {} with message "{}".'.format(
                 d.serial, message)).send_message()
     update_message_mp3_path(d, True)
-    user.status = UserStatus.SET_MESSAGE.value
+    if not default:
+        user.status = UserStatus.SET_MESSAGE.value
+    else:
+        user.status = UserStatus.SETTING_MESSAGE.value
     db.session.commit()
 
 
@@ -105,7 +108,7 @@ def handle_postback(user, sm, payload):
         db.session.commit()
         sm.build_text_message(GET_STARTED_REPLY.format(
             user.first_name)).send_message()
-        register_device(user, DEFAULT_SERIAL, DEFAULT_WISH_REPLY, False)
+        register_device(user, DEFAULT_SERIAL, DEFAULT_WISH_REPLY, True, False)
 
 
 @app.route(API_ROOT + FB_WEBHOOK, methods=['POST'])
