@@ -293,12 +293,15 @@ public class SpeechRecognizer: MonoBehaviour {
 
     IEnumerator Play()
     {
-        firework1.gameObject.SetActive(true);
-        yield return new WaitForSeconds(0.5f);
-        firework2.gameObject.SetActive(true);
-        yield return new WaitForSeconds(1.5f);
-        firework1.gameObject.SetActive(false);
-        yield return new WaitForSeconds(0.5f);
-        firework2.gameObject.SetActive(false);
+		for (int i = 0; i < 5; i++) {
+	        firework1.gameObject.SetActive(true);
+	        yield return new WaitForSeconds(0.5f);
+	        firework2.gameObject.SetActive(true);
+	        yield return new WaitForSeconds(1.5f);
+	        firework1.gameObject.SetActive(false);
+	        yield return new WaitForSeconds(0.5f);
+	        firework2.gameObject.SetActive(false);
+			yield return new WaitForSeconds(1f);
+		}
     }
 }
