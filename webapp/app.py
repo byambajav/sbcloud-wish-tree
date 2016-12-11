@@ -82,6 +82,7 @@ def register_device(user, serial, message, default=False, confirm=True):
     if d is None:
         d = Device(serial, user.id, message)
         db.session.add(d)
+        db.session.commit()
         if confirm:
             sm.build_text_message('Registered {} with message "{}".'.format(
                 d.serial, message)).send_message()
