@@ -44,6 +44,7 @@ public class SerialHandler : MonoBehaviour
 
 		thread_ = new Thread(Read);
 		thread_.Start();
+		Write ("R");
 	}
 
 	private void Close()

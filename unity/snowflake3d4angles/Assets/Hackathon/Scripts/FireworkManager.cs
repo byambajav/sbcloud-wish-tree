@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class FireworkManager : MonoBehaviour {
@@ -23,6 +24,11 @@ public class FireworkManager : MonoBehaviour {
         {
             StartCoroutine(Play());
         }
+		if (Input.GetButtonDown("Fire1"))
+		{
+			SceneManager.LoadScene ("SensorReader");
+		}
+
     }
 
     IEnumerator Play()
