@@ -38,8 +38,8 @@ public class SpeechRecognizer: MonoBehaviour {
     /// </summary>
     Action<SpeechRecognizer> m_OnReceivedLastResponse;
 
-    public string WISHTREE_SERVER_URL = "https://c2438ab0.ngrok.io/";
-    // public string WISHTREE_SERVER_URL = "https://69422f4c.ngrok.io/";
+    // public string WISHTREE_SERVER_URL = "https://c2438ab0.ngrok.io/";
+    public string WISHTREE_SERVER_URL = "https://69422f4c.ngrok.io/";
 
     /// <summary>
     /// The specific speech-to-text service to use
