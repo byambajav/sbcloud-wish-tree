@@ -10,7 +10,7 @@ from gtts import gTTS
 from models import User, db
 from random import choice
 from string import ascii_lowercase
-
+from pydub import AudioSegment
 
 def get_user(sender_id):
     user = User.query.filter_by(sender_id=sender_id).first()
@@ -66,12 +66,19 @@ def find_in_list(l, e):
 
 def update_message_mp3_path(device):
     if device.message_mp3_path != '' and os.path.exists(
-            device.message_mp3_path):
+            device.message_mp3_path) and device.message_mp3_path.endswith(
+                'ogg'):
         return
     tts = gTTS(text=device.message, lang='en')
     path = 'static/message_mp3s/{}_{}.mp3'.format(device.id, ''.join(
         choice(ascii_lowercase) for i in range(12)))
     tts.save(path)
-    device.message_mp3_path = path
+
+    # then convert to OGG
+    clip = AudioSegment.from_mp3(path)
+    ogg_path = path[:-3] + 'ogg'
+    clip.export(ogg_path, format='ogg')
+
+    device.message_mp3_path = ogg_path
     db.session.add(device)
     db.session.commit()

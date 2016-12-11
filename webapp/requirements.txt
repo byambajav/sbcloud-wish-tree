@@ -8,6 +8,7 @@ gTTS-token==1.1.1
 itsdangerous==0.24
 Jinja2==2.8
 MarkupSafe==0.23
+pydub==0.16.6
 requests==2.12.3
 simplejson==3.10.0
 SQLAlchemy==1.1.4

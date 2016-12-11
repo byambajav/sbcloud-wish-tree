@@ -39,6 +39,7 @@ public class SpeechRecognizer: MonoBehaviour {
     Action<SpeechRecognizer> m_OnReceivedLastResponse;
 
     public string WISHTREE_SERVER_URL = "https://c2438ab0.ngrok.io/";
+    // public string WISHTREE_SERVER_URL = "https://69422f4c.ngrok.io/";
 
     /// <summary>
     /// The specific speech-to-text service to use
@@ -204,8 +205,18 @@ public class SpeechRecognizer: MonoBehaviour {
         WWW www = new WWW(url);
         yield return www;
         Debug.Log("WishTreeServer Response: " + www.text);
+        StartCoroutine(DownloadAndPlay(WISHTREE_SERVER_URL + www.text));
     }
 
+    IEnumerator DownloadAndPlay(string url)
+    {
+        WWW www = new WWW(url);
+        yield return www;
+
+        AudioSource audio = GetComponent<AudioSource>();
+        audio.clip = www.audioClip;
+        audio.Play();
+    }
 
     /// <summary>
     /// Function that is called when an error occurs. If this object is waiting for
