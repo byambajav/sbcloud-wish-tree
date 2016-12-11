@@ -40,6 +40,7 @@ public class SpeechRecognizer: MonoBehaviour {
 
     // public string WISHTREE_SERVER_URL = "https://c2438ab0.ngrok.io/";
     public string WISHTREE_SERVER_URL = "https://69422f4c.ngrok.io/";
+    public string SANTA_OGG_PATH = "file:///Users/byambajav/git-repos/wish-tree/unity/snowflake3d4angles/Assets/santa.ogg";
 
     /// <summary>
     /// The specific speech-to-text service to use
@@ -67,6 +68,12 @@ public class SpeechRecognizer: MonoBehaviour {
     private IEnumerator WaitAndStartRecording(float startWaitTime, float stopWaitTime) {
         yield return new WaitForSeconds(startWaitTime);
         print("WaitAndStartRecording " + Time.time);
+
+        // play santa
+        StartCoroutine(DownloadAndPlay(SANTA_OGG_PATH));
+        yield return new WaitForSeconds(5);
+
+        // Then start recording
         StartRecording();
 
         // reserve stop
