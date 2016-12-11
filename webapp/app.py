@@ -71,7 +71,7 @@ def wishmessage_hook():
         update_message_mp3_path(d)
 
     if len(ds) > 0:
-        return d[-1].message_mp3_path
+        return ds[-1].message_mp3_path
     else:
         return DEFAULT_OGG_PATH
 
