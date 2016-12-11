@@ -32,7 +32,7 @@ GET_STARTED_REPLY = (
     'Type it and hit send!'
 )
 
-DEFAULT_OGG_PATH = 'static/default_ogg.py'
+DEFAULT_OGG_PATH = 'static/default.ogg'
 DEFAULT_SERIAL = 'wish-tree-01'
 DEFAULT_WISH_REPLY = 'You are the best kid in the world!'
 
