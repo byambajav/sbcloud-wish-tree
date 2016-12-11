@@ -28,7 +28,7 @@ GET_STARTED_REPLY = (
     'Hi {}. Welcome to WishTree!\n'
     'When your kid makes a wish, our Santa Clause will reply with a message. '
     'You can replace that message content by typing your message here. '
-    'Example: "You are the best kid in the world!"'
+    'Example: "You are the best kid in the world!" '
     'Type it and hit send!'
 )
 
@@ -76,18 +76,20 @@ def wishmessage_hook():
         return DEFAULT_OGG_PATH
 
 
-def register_device(user, serial, message):
+def register_device(user, serial, message, confirm=True):
     d = Device.query.filter_by(serial=serial, user_id=user.id).first()
     sm = SendMessage(user.sender_id)
     if d is None:
         d = Device(serial, user.id, message)
         db.session.add(d)
-        sm.build_text_message('Registered {} with message "{}".'.format(
-            d.serial, message)).send_message()
+        if confirm:
+            sm.build_text_message('Registered {} with message "{}".'.format(
+                d.serial, message)).send_message()
     else:
         d.message = message
-        sm.build_text_message('Updated {} with message "{}".'.format(
-            d.serial, message)).send_message()
+        if confirm:
+            sm.build_text_message('Updated {} with message "{}".'.format(
+                d.serial, message)).send_message()
     update_message_mp3_path(d, True)
     user.status = UserStatus.SET_MESSAGE.value
     db.session.commit()
@@ -103,7 +105,7 @@ def handle_postback(user, sm, payload):
         db.session.commit()
         sm.build_text_message(GET_STARTED_REPLY.format(
             user.first_name)).send_message()
-        register_device(user, DEFAULT_SERIAL, DEFAULT_WISH_REPLY)
+        register_device(user, DEFAULT_SERIAL, DEFAULT_WISH_REPLY, False)
 
 
 @app.route(API_ROOT + FB_WEBHOOK, methods=['POST'])
