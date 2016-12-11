@@ -51,3 +51,7 @@ It's Christmas. Let's bring Santa Claus to our home and make the kids' wishes co
   - [gTTS](https://github.com/pndurette/gTTS)
   - [ffmpeg](https://www.ffmpeg.org/)
 
+
+## Future works
+- Show gifts for parents using AliExpress & Amazon using the respective affiliate APIs.
+- Make the hardware setup more lightweight and mass-producable.
