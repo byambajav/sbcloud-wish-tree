@@ -49,6 +49,7 @@ def wishmessage_hook():
     if d is None:
         return "invalid serial"
     else:
+        update_message_mp3_path(d)
         return d.message_mp3_path
 
 

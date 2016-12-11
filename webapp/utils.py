@@ -8,6 +8,8 @@ import requests
 
 from gtts import gTTS
 from models import User, db
+from random import choice
+from string import ascii_lowercase
 
 
 def get_user(sender_id):
@@ -67,7 +69,8 @@ def update_message_mp3_path(device):
             device.message_mp3_path):
         return
     tts = gTTS(text=device.message, lang='en')
-    path = 'message_mp3s/{}.mp3'.format(device.id)
+    path = 'static/message_mp3s/{}_{}.mp3'.format(device.id, ''.join(
+        choice(ascii_lowercase) for i in range(12)))
     tts.save(path)
     device.message_mp3_path = path
     db.session.add(device)
