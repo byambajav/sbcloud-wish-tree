@@ -38,3 +38,16 @@ It's Christmas. Let's bring Santa Claus to our home and make the kids' wishes co
 	- Pin 1 to GND
 	- Pin 2 to A0
 	- Pin 3 to 5V
+
+## Backend WebApp
+- Main language
+  - Python 3.5.2
+- Server
+  - Aliyun + `aliyuncli`
+  - [Flask 0.11.1](http://flask.pocoo.org/)
+  - [nginx](https://www.nginx.com/)
+  - [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/)
+- Text-to-speech
+  - [gTTS](https://github.com/pndurette/gTTS)
+  - [ffmpeg](https://www.ffmpeg.org/)
+
