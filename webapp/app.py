@@ -28,8 +28,13 @@ GET_STARTED_REPLY = (
     'Hi {}. Welcome to WishTree!\n'
     'When your kid makes a wish, our Santa Clause will reply with a message. '
     'You can replace that message content by typing your message here. '
+    'Example: "You are the best kid in the world!"'
     'Type it and hit send!'
 )
+
+DEFAULT_OGG_PATH = 'static/default_ogg.py'
+DEFAULT_SERIAL = 'wish-tree-01'
+DEFAULT_WISH_REPLY = 'You are the best kid in the world!'
 
 
 class Payload():
@@ -57,12 +62,18 @@ def wishmessage_hook():
     serial = request.args.get('serial')
     print("{} says message:{} serial:{}".format(request.remote_addr, message,
                                                 serial))
-    d = Device.query.filter_by(serial=serial).first()
-    if d is None:
-        return "invalid serial"
-    else:
+    ds = Device.query.filter_by(serial=serial).all()
+    print("Found {} registrations for device {}".format(len(ds), serial))
+    for d in ds:
+        sm = SendMessage(d.user.sender_id)
+        sm.build_text_message("{} says {}".format(
+            serial, message)).send_message()
         update_message_mp3_path(d)
-        return d.message_mp3_path
+
+    if len(ds) > 0:
+        return d[-1].message_mp3_path
+    else:
+        return DEFAULT_OGG_PATH
 
 
 def register_device(user, serial, message):
@@ -73,11 +84,11 @@ def register_device(user, serial, message):
         db.session.add(d)
         sm.build_text_message('Registered {} with message "{}".'.format(
             d.serial, message)).send_message()
-        update_message_mp3_path(d)
     else:
         d.message = message
         sm.build_text_message('Updated {} with message "{}".'.format(
             d.serial, message)).send_message()
+    update_message_mp3_path(d, True)
     user.status = UserStatus.SET_MESSAGE.value
     db.session.commit()
 
@@ -92,6 +103,7 @@ def handle_postback(user, sm, payload):
         db.session.commit()
         sm.build_text_message(GET_STARTED_REPLY.format(
             user.first_name)).send_message()
+        register_device(user, DEFAULT_SERIAL, DEFAULT_WISH_REPLY)
 
 
 @app.route(API_ROOT + FB_WEBHOOK, methods=['POST'])
@@ -135,7 +147,7 @@ def fb_receive_message():
                     if user.status == UserStatus.SETTING_MESSAGE.value:
                         register_device(
                             user,
-                            'wish-tree-01',
+                            DEFAULT_SERIAL,
                             text
                         )
                         return "register status"

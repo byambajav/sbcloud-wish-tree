@@ -40,6 +40,8 @@ class Device(db.Model):
     message = db.Column(db.String(1024))
     message_mp3_path = db.Column(db.String(1024))
 
+    user = db.relationship(u'User')
+
     def __init__(self, serial, user_id, message, message_mp3_path=''):
         self.serial = serial
         self.user_id = user_id
